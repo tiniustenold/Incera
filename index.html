@@ -1,113 +1,160 @@
 <!DOCTYPE html>
 <html lang="no">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Incera</title>
 <style>
-  :root{
-    --blue-0:#0b1020;
-    --blue-1:#0e1b2f;
-    --blue-2:#12233c;
-    --accent:#cfe8ff;
-    --shine:50%;
-    --mx:0%;
-    --my:0%;
-  }
-
-  html,body{height:100%;margin:0}
-  body{font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;background:#000;overflow-x:hidden}
-
-  .hero{
-    position:relative; min-height:100vh; isolation:isolate; overflow:hidden;
-    background:
-      radial-gradient(120vw 120vh at 15% 10%, #0a1324 0%, #08101f 40%, #060c18 80%, #03070e 100%),
-      linear-gradient(180deg, #02060f 0%, transparent 40%) ;
-  }
-
-  .hero::before{
-    content:""; position:absolute; inset:-20vh -20vw;
-    background:
-      linear-gradient(120deg, transparent 18%, rgba(255,255,255,0.06) 19%, rgba(255,255,255,0.06) 38%, transparent 39%) ,
-      linear-gradient(120deg, transparent 40%, rgba(0,0,0,0.25) 41%, rgba(0,0,0,0.25) 58%, transparent 59%);
-    background-size: 160vmax 160vmax, 160vmax 160vmax;
-    background-position: -10vmax -10vmax, 20vmax -5vmax;
-    background-blend-mode: screen, multiply;
-    filter: saturate(105%) contrast(102%);
-    opacity:.9;
-  }
-
-  .grain, .vignette, .shine{position:absolute; inset:-20vh -20vw; pointer-events:none;}
-  .grain{
-    opacity:.06; mix-blend-mode:soft-light;
-    background:
-      radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.5), transparent 60%),
-      radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,.5), transparent 60%),
-      radial-gradient(1px 1px at 30% 70%, rgba(255,255,255,.5), transparent 60%),
-      radial-gradient(1px 1px at 60% 40%, rgba(255,255,255,.5), transparent 60%),
-      radial-gradient(1px 1px at 90% 80%, rgba(255,255,255,.5), transparent 60%);
-    background-size: 300px 300px, 320px 320px, 340px 340px, 360px 360px, 380px 380px;
-    animation: grain 6s steps(2,end) infinite;
-  }
-  @keyframes grain { 50% {transform:translate3d(-10px,10px,0)} }
-
-  .vignette{
-    background:
-      radial-gradient(120vmax 80vmax at 50% 55%, transparent 60%, rgba(0,0,0,.45) 100%);
-    mix-blend-mode:multiply;
-  }
-
-  .shine{
-    --x: calc(60% + (var(--mx) - 50%) * 0.25);
-    --y: calc(var(--shine));
-    background:
-      radial-gradient(140vmax 30vmax at var(--x) var(--y),
-        rgba(255,255,255,.14), rgba(255,255,255,0) 55%),
-      linear-gradient(120deg, rgba(255,255,255,.08), rgba(255,255,255,0) 45%);
-    mix-blend-mode:screen;
-    transform: translateZ(0);
-  }
-
-  .content{
+  html,body{height:100%;margin:0;overflow-x:hidden;background:#060b15}
+  body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  /* Canvas fyller hele skjermen */
+  #scene{position:fixed; inset:0; display:block}
+  /* Logo midt på, over 3D */
+  .overlay{
     position:relative; z-index:2; height:100vh;
-    display:flex; align-items:center; justify-content:center;
-    text-align:center; padding:24px;
+    display:grid; place-items:center;
+    pointer-events:none;
   }
-  .content img{ width:min(520px, 70vw); height:auto; display:block; filter: drop-shadow(0 6px 24px rgba(0,0,0,.35)); }
-
-  @media (max-width:600px){
-    .content img{ width:min(360px, 78vw); }
+  .overlay img{
+    width:min(520px,72vw); height:auto; filter:drop-shadow(0 6px 24px rgba(0,0,0,.35));
   }
 </style>
 </head>
 <body>
-  <section class="hero">
-    <div class="grain"></div>
-    <div class="shine"></div>
-    <div class="vignette"></div>
+  <canvas id="scene"></canvas>
+  <div class="overlay">
+    <img src="Incera_logo-02.png" alt="Incera">
+  </div>
 
-    <div class="content">
-      <img src="Incera_logo-02.png" alt="Incera">
-    </div>
-  </section>
+  <script type="module">
+    import * as THREE from "https://unpkg.com/three@0.159.0/build/three.module.js";
+    import { RoomEnvironment } from "https://unpkg.com/three@0.159.0/examples/jsm/environments/RoomEnvironment.js";
 
-  <script>
-    const root = document.documentElement;
+    const canvas = document.getElementById('scene');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:false });
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.0;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0a1020); // dyp blåsvart
+
+    // Subtil “dis”/fog for dybde
+    scene.fog = new THREE.Fog(0x0a1020, 12, 28);
+
+    // Physically-correct lights + env
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.1).texture;
+
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+    camera.position.set(0, 2.2, 14);
+
+    // --- Geometri: diagonale paneler (lange bokser) ---
+    const group = new THREE.Group();
+    scene.add(group);
+
+    // Fysisk materiale: klar glans, smooth, mørk blå
+    const mat = new THREE.MeshPhysicalMaterial({
+      color: new THREE.Color("#0f213a"),
+      metalness: 0.1,
+      roughness: 0.08,          // lav → skarp highlight
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.04, // enda skarpere specular
+      envMapIntensity: 1.2
+    });
+
+    // Lag 5 brede, tynne paneler som legges diagonalt
+    const W = 50, H = 4, D = 0.4; // bredde, høyde, tykkelse
+    const geo = new THREE.BoxGeometry(W, H, D);
+    const offsets = [-14, -6, 2, 10, 18]; // X-posisjoner (sprik)
+    offsets.forEach((x,i)=>{
+      const m = mat.clone();
+      // Gi litt variasjon i lys/mørke mellom stripene:
+      const c = m.color.clone().multiplyScalar(1 - (i%2?0.06:0.0));
+      m.color.copy(c);
+      const mesh = new THREE.Mesh(geo, m);
+      mesh.rotation.z = THREE.MathUtils.degToRad(-22); // diagonal
+      mesh.position.set(x, -1.0 + (i%2?0.25:-0.25), -i*1.4); // dybde & liten y-offset
+      // Myk kant (bevel-lignende følelse): skaler litt i Z
+      mesh.scale.z = 1.02;
+      group.add(mesh);
+    });
+
+    // Subtilt gulv for realisme (mørk gradient)
+    {
+      const plane = new THREE.Mesh(
+        new THREE.PlaneGeometry(120, 120),
+        new THREE.MeshPhysicalMaterial({
+          color: "#0a1326", metalness:0.0, roughness:0.9, clearcoat:0.2, clearcoatRoughness:0.2
+        })
+      );
+      plane.rotation.x = -Math.PI/2;
+      plane.position.y = -6;
+      plane.receiveShadow = false;
+      scene.add(plane);
+    }
+
+    // --- Lys: skarp “streak” som flyttes med scroll ---
+    const key = new THREE.SpotLight(0xffffff, 4.0, 80, THREE.MathUtils.degToRad(18), 0.35, 1.2);
+    key.position.set(12, 8, 10);
+    key.target.position.set(-6, -1, -8);
+    scene.add(key, key.target);
+
+    // Rim light for kanter
+    const rim = new THREE.DirectionalLight(0x8ecaff, 0.8);
+    rim.position.set(-8, 6, -6);
+    scene.add(rim);
+
+    // Svak ambient
+    scene.add(new THREE.AmbientLight(0x1c2a44, 0.3));
+
+    // Scroll styrer lysposisjon og liten kamerabevegelse
     function onScroll(){
       const h = document.body.scrollHeight - innerHeight;
-      const p = h>0 ? scrollY/h : 0;
-      root.style.setProperty('--shine', (p*100).toFixed(2) + '%');
+      const p = h>0 ? scrollY/h : 0; // 0–1
+      // Flytt spotlyset langs en bane for skarp highlight
+      key.position.x = THREE.MathUtils.lerp(14, -6, p);
+      key.position.y = THREE.MathUtils.lerp(9, 5, p);
+      key.position.z = THREE.MathUtils.lerp(12, -2, p);
+      key.target.position.x = THREE.MathUtils.lerp(-4, 6, p);
+      key.target.position.y = THREE.MathUtils.lerp(-1.2, -0.6, p);
+      key.target.position.z = THREE.MathUtils.lerp(-8, -4, p);
+      key.target.updateMatrixWorld();
+
+      // Liten kameradolly for dybde
+      camera.position.z = THREE.MathUtils.lerp(14, 11.5, p);
+      camera.position.y = THREE.MathUtils.lerp(2.2, 1.8, p);
     }
-    function onMove(e){
-      const x = (e.clientX ?? (e.touches?.[0]?.clientX || innerWidth/2)) / innerWidth * 100;
-      const y = (e.clientY ?? (e.touches?.[0]?.clientY || innerHeight/2)) / innerHeight * 100;
-      root.style.setProperty('--mx', x.toFixed(2) + '%');
-      root.style.setProperty('--my', y.toFixed(2) + '%');
+
+    // Parallax m/ mus for ekstra “premium”-følelse
+    function onPointer(e){
+      const x = (e.clientX ?? e.touches?.[0]?.clientX ?? innerWidth/2) / innerWidth - 0.5;
+      const y = (e.clientY ?? e.touches?.[0]?.clientY ?? innerHeight/2) / innerHeight - 0.5;
+      group.rotation.z = -0.38 + x * 0.04; // litt helning
+      group.position.y = -0.6 + y * 0.6;
     }
+
+    // Resize
+    function resize(){
+      const w = canvas.clientWidth || innerWidth;
+      const h = canvas.clientHeight || innerHeight;
+      renderer.setSize(w, h, false);
+      camera.aspect = w/h; camera.updateProjectionMatrix();
+    }
+
+    // Render loop
+    function render(){
+      requestAnimationFrame(render);
+      renderer.render(scene, camera);
+    }
+
+    // Init
+    addEventListener('resize', resize);
     addEventListener('scroll', onScroll, {passive:true});
-    addEventListener('mousemove', onMove, {passive:true});
-    addEventListener('touchmove', onMove, {passive:true});
-    onScroll(); onMove({clientX:innerWidth*0.6, clientY:innerHeight*0.5});
+    addEventListener('mousemove', onPointer, {passive:true});
+    addEventListener('touchmove', onPointer, {passive:true});
+    resize(); onScroll(); onPointer({clientX:innerWidth*.55, clientY:innerHeight*.45});
+    render();
   </script>
 </body>
 </html>
