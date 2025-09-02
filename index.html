@@ -1,92 +1,68 @@
-<!doctype html>
-<html lang="no">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Incera — Enkel, profesjonell nettside</title>
-  <meta name="description" content="Incera leverer enkle, profesjonelle nettsider og digitale løsninger.">
-  <meta property="og:title" content="Incera">
-  <meta property="og:description" content="Enkle, profesjonelle nettsider og digitale løsninger.">
-  <meta property="og:type" content="website">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="assets/favicon.svg">
-</head>
-<body>
-  <header class="site-header">
-    <div class="container nav">
-      <a class="brand" href="#top" aria-label="Incera logo">
-        <img src="assets/logo.svg" alt="" class="logo" width="28" height="28">
-        <span>Incera</span>
-      </a>
-      <nav class="primary-nav" aria-label="Hovedmeny">
-        <a href="#tjenester">Tjenester</a>
-        <a href="#om">Om</a>
-        <a class="btn" href="#kontakt">Kontakt</a>
-      </nav>
-    </div>
-  </header>
+<section class="hero-green">
+  <canvas id="scene"></canvas>
+  <div class="content">
+    <!-- Logo / tagline kommer her -->
+  </div>
+</section>
 
-  <main id="top">
-    <section class="hero container">
-      <h1>Enkelt. Ryddig. <span class="accent">Proft.</span></h1>
-      <p class="lead">Vi lager slanke nettsider og små løsninger som ser store ut. Fokus på hastighet, tydelighet og finish.</p>
-      <div class="cta-row">
-        <a class="btn" href="#kontakt">Start en prat</a>
-        <a class="link" href="#tjenester">Se hva vi gjør</a>
-      </div>
-      <div class="hero-card">
-        <p class="muted">100% statisk — lynrask, sikker og gratis hosting via GitHub Pages.</p>
-      </div>
-    </section>
+<!-- Three.js (ESM) -->
+<script type="module">
+  import * as THREE from "https://unpkg.com/three@0.159.0/build/three.module.js";
 
-    <section id="tjenester" class="section container">
-      <h2>Tjenester</h2>
-      <div class="grid">
-        <article class="card">
-          <div class="icon"><svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='3' width='18' height='14' rx='2'/><path d='M8 21h8'/><path d='M12 17v4'/></svg></div>
-          <h3>Nettsider</h3>
-          <p>Landingssider og enkle bedriftsnettsider med topp typografi, luft og struktur.</p>
-        </article>
-        <article class="card">
-          <div class="icon"><svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><path d='M3 3h7v7H3z'/><path d='M14 3h7v7h-7z'/><path d='M14 14h7v7h-7z'/><path d='M3 14h7v7H3z'/></svg></div>
-          <h3>Designsystem</h3>
-          <p>Lettvekts designregler og komponenter som gjør alt konsistent og skalerbart.</p>
-        </article>
-        <article class="card">
-          <div class="icon"><svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><path d='M3 21v-4a4 4 0 0 1 4-4h5'/><circle cx='17' cy='7' r='3'/><path d='M16 21l5-5'/><path d='M21 21h-5v-5'/></svg></div>
-          <h3>Rådgivning</h3>
-          <p>Prioritering, navngivning, microcopy og raske forbedringer som merkes.</p>
-        </article>
-      </div>
-    </section>
+  const canvas = document.getElementById('scene');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, innerWidth/innerHeight, 0.1, 100);
+  camera.position.set(0, 0, 6);
 
-    <section id="om" class="section container">
-      <h2>Om Incera</h2>
-      <p>Vi er et lite team som liker å holde ting enkelt. Ingen buzzwords, bare godt håndverk og raske leveranser.</p>
-    </section>
+  // Lys
+  const key = new THREE.DirectionalLight(0xffffff, 1.1); key.position.set(2,3,5); scene.add(key);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.4));
 
-    <section id="kontakt" class="section container">
-      <h2>Kontakt</h2>
-      <div class="contact">
-        <p>E-post: <a href="mailto:post@incera.no">post@incera.no</a></p>
-        <p>Telefon: <a href="tel:+4700000000">+47 00 00 00 00</a></p>
-      </div>
-      <p class="muted">Endre til riktig e‑post/telefon i <code>index.html</code> når dere er klare.</p>
-    </section>
-  </main>
+  // Materiale med subtilt grid-mønster
+  const size = 256;
+  const cvs = document.createElement('canvas'); cvs.width = cvs.height = size;
+  const ctx = cvs.getContext('2d');
+  ctx.fillStyle = '#9fe3d8'; ctx.fillRect(0,0,size,size);            // basefarge
+  ctx.strokeStyle = 'rgba(0,0,0,0.08)'; ctx.lineWidth = 1;           // grid-linjer
+  const step = 8;
+  for(let x=0;x<=size;x+=step){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,size); ctx.stroke(); }
+  for(let y=0;y<=size;y+=step){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(size,y); ctx.stroke(); }
+  const tex = new THREE.CanvasTexture(cvs); tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.repeat.set(4,4);
 
-  <footer class="site-footer">
-    <div class="container foot">
-      <span>© <span id="year"></span> Incera</span>
-      <a class="link" href="#top">Til toppen ↑</a>
-    </div>
-  </footer>
+  const mat = new THREE.MeshStandardMaterial({
+    color: 0x91e0d2,
+    metalness: 0.25,
+    roughness: 0.35,
+    map: tex
+  });
 
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
-</body>
-</html>
+  const geo = new THREE.BoxGeometry(3, 3, 3, 64, 64, 64);
+  const cube = new THREE.Mesh(geo, mat); scene.add(cube);
+
+  // Resize
+  function resize(){
+    const w = canvas.clientWidth || innerWidth;
+    const h = canvas.clientHeight || innerHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w/h; camera.updateProjectionMatrix();
+  }
+  addEventListener('resize', resize); resize();
+
+  // Scroll → rotasjon
+  function scrollRotation(){
+    const h = document.body.scrollHeight - innerHeight;
+    const p = h>0 ? scrollY/h : 0;
+    cube.rotation.x = p * Math.PI * 1.2; // vertikal rotasjon
+    cube.rotation.y = 0.35;              // liten tilt for dybde
+  }
+  addEventListener('scroll', scrollRotation, { passive:true });
+
+  // Render loop
+  (function render(){
+    requestAnimationFrame(render);
+    renderer.setClearColor(0x0b1220, 0); // transparent (sekjonen har egen bakgrunn)
+    renderer.render(scene, camera);
+  })();
+  scrollRotation();
+</script>
