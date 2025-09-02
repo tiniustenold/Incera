@@ -1,68 +1,74 @@
-<section class="hero-green">
-  <canvas id="scene"></canvas>
-  <div class="content">
-    <!-- Logo / tagline kommer her -->
-  </div>
-</section>
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Incera</title>
+  <style>
+    :root{
+      --bg:#0b1020;         
+      --rail:#0e1b2f;       
+      --rail2:#0a1527;      
+      --accent:#15c2c6;     
+      --shine:50%;          
+    }
+    html,body{height:100%;margin:0}
+    body{font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;}
 
-<!-- Three.js (ESM) -->
-<script type="module">
-  import * as THREE from "https://unpkg.com/three@0.159.0/build/three.module.js";
+    .hero-dark{
+      position:relative; min-height:100vh; overflow:hidden; background:var(--bg);
+    }
+    .hero-dark::before{
+      content:""; position:absolute; inset:-10vh -10vw;
+      background:
+        linear-gradient(120deg, transparent 20%, var(--rail) 20%, var(--rail) 36%, transparent 36%) ,
+        linear-gradient(120deg, transparent 40%, var(--rail2) 40%, var(--rail2) 56%, transparent 56%);
+      background-size: 120vmax 120vmax, 120vmax 120vmax;
+      background-position: 0 0, 20vmax -10vmax;
+      filter: saturate(110%);
+    }
+    .shine{
+      position:absolute; inset:-20vh -20vw;
+      background:
+        radial-gradient(80vmax 20vmax at 60% var(--shine),
+          rgba(255,255,255,.10), rgba(255,255,255,0) 55%) ,
+        linear-gradient(120deg, rgba(255,255,255,.08), rgba(255,255,255,0) 40%);
+      mix-blend-mode: screen; pointer-events:none;
+      transition: background-position .1s linear;
+    }
+    .content{
+      position:relative; z-index:1; height:100vh;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      text-align:center; color:#b9dfe0;
+      padding:2rem;
+    }
+    .content img{
+      max-width: 320px;
+      height:auto;
+    }
+    .content p{
+      margin-top:1.5rem; font-size:1.1rem; color:#cfd8dc;
+    }
+  </style>
+</head>
+<body>
+  <section class="hero-dark">
+    <div class="shine"></div>
+    <div class="content">
+      <img src="Incera_logo-02.png" alt="Incera logo">
+      <p>Automatisering som frigjør tid</p>
+    </div>
+  </section>
 
-  const canvas = document.getElementById('scene');
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(45, innerWidth/innerHeight, 0.1, 100);
-  camera.position.set(0, 0, 6);
-
-  // Lys
-  const key = new THREE.DirectionalLight(0xffffff, 1.1); key.position.set(2,3,5); scene.add(key);
-  scene.add(new THREE.AmbientLight(0xffffff, 0.4));
-
-  // Materiale med subtilt grid-mønster
-  const size = 256;
-  const cvs = document.createElement('canvas'); cvs.width = cvs.height = size;
-  const ctx = cvs.getContext('2d');
-  ctx.fillStyle = '#9fe3d8'; ctx.fillRect(0,0,size,size);            // basefarge
-  ctx.strokeStyle = 'rgba(0,0,0,0.08)'; ctx.lineWidth = 1;           // grid-linjer
-  const step = 8;
-  for(let x=0;x<=size;x+=step){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,size); ctx.stroke(); }
-  for(let y=0;y<=size;y+=step){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(size,y); ctx.stroke(); }
-  const tex = new THREE.CanvasTexture(cvs); tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.repeat.set(4,4);
-
-  const mat = new THREE.MeshStandardMaterial({
-    color: 0x91e0d2,
-    metalness: 0.25,
-    roughness: 0.35,
-    map: tex
-  });
-
-  const geo = new THREE.BoxGeometry(3, 3, 3, 64, 64, 64);
-  const cube = new THREE.Mesh(geo, mat); scene.add(cube);
-
-  // Resize
-  function resize(){
-    const w = canvas.clientWidth || innerWidth;
-    const h = canvas.clientHeight || innerHeight;
-    renderer.setSize(w, h, false);
-    camera.aspect = w/h; camera.updateProjectionMatrix();
-  }
-  addEventListener('resize', resize); resize();
-
-  // Scroll → rotasjon
-  function scrollRotation(){
-    const h = document.body.scrollHeight - innerHeight;
-    const p = h>0 ? scrollY/h : 0;
-    cube.rotation.x = p * Math.PI * 1.2; // vertikal rotasjon
-    cube.rotation.y = 0.35;              // liten tilt for dybde
-  }
-  addEventListener('scroll', scrollRotation, { passive:true });
-
-  // Render loop
-  (function render(){
-    requestAnimationFrame(render);
-    renderer.setClearColor(0x0b1220, 0); // transparent (sekjonen har egen bakgrunn)
-    renderer.render(scene, camera);
-  })();
-  scrollRotation();
-</script>
+  <script>
+    const root = document.documentElement;
+    const onScroll = () => {
+      const h = document.body.scrollHeight - innerHeight;
+      const p = h > 0 ? (scrollY / h) : 0;
+      root.style.setProperty('--shine', (p * 100).toFixed(2) + '%');
+    };
+    addEventListener('scroll', onScroll, { passive:true });
+    onScroll();
+  </script>
+</body>
+</html>
