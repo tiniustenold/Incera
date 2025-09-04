@@ -5,9 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Incera</title>
 
-  <!-- Favicon (.ico i root, små bokstaver) -->
-  <link rel="icon" href="/Incera/favicon.ico?v=5" type="image/x-icon" />
-  <link rel="shortcut icon" href="/Incera/favicon.ico?v=5" type="image/x-icon" />
+  <!-- Favicon (.ico + PNG fallback) -->
+  <link rel="icon" href="favicon.ico?v=6" type="image/x-icon" />
+  <link rel="shortcut icon" href="favicon.ico?v=6" type="image/x-icon" />
+  <link rel="icon" type="image/png" sizes="32x32" href="Incera_logo-03.png" />
 
   <meta name="theme-color" content="#000000" />
   <meta name="color-scheme" content="dark" />
@@ -21,7 +22,6 @@
       font-family: Arial, Helvetica, sans-serif;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
       align-items: center;
       text-align: center;
       min-height: 100vh;
@@ -35,13 +35,13 @@
       margin-top: 60px;   /* avstand mellom logo og tekst */
       font-size: 1.4em;
     }
-    footer {
-      margin-bottom: 20px;
+    .contact {
+      margin-top: 80px;   /* flytter kontakt-delen oppover */
       font-size: .9em;
       color: #aaa;
       line-height: 1.6;
     }
-    footer a {
+    .contact a {
       color: #fff;
       text-decoration: none;
       font-weight: 600;
@@ -52,10 +52,10 @@
   <div>
     <img src="Incera_logo-02.png" alt="Incera logo" class="logo" />
     <div class="coming-soon">Nettside kommer snart</div>
+    <div class="contact">
+      kontakt:<br />
+      <a href="mailto:kontakt@incera.no">kontakt@incera.no</a>
+    </div>
   </div>
-  <footer>
-    kontakt:<br />
-    <a href="mailto:kontakt@incera.no">kontakt@incera.no</a>
-  </footer>
 </body>
 </html>
