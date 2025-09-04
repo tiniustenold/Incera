@@ -1,29 +1,46 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="no">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Incera</title>
-  <meta name="color-scheme" content="dark">
-  <link rel="preload" as="image" href="Incera_logo-02.png">
   <style>
-    :root { color-scheme: dark; }
-    html, body { height: 100%; margin: 0; }
     body {
-      background: #000;                 /* helt sort bakgrunn */
-      min-height: 100svh;               /* full høyde, mobil-trygt */
-      display: grid;
-      place-items: center;              /* sentrer innholdet */
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Inter, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
     }
-    img.logo {
-      width: min(64vw, 520px);          /* skalerer pent på mobil/desktop */
-      height: auto;
-      display: block;
+    img {
+      max-width: 250px;
+      margin-bottom: 20px;
+    }
+    .description {
+      font-size: 1.2rem;
+      margin-bottom: 60px;
+    }
+    .contact {
+      position: absolute;
+      bottom: 30px;
+      font-size: 1rem;
+      color: #aaa;
     }
   </style>
 </head>
 <body>
-  <img class="logo" src="Incera_logo-02.png" alt="Incera">
+  <img src="Incera_logo-02.png" alt="Incera logo">
+  <div class="description">
+    Vi automatiserer prosesser slik at du frigjør tid til det som virkelig betyr noe.
+  </div>
+  <div class="contact">
+    kontakt: <a href="mailto:kontakt@incera.no" style="color:#fff;">kontakt@incera.no</a>
+  </div>
 </body>
 </html>
