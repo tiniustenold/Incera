@@ -4,46 +4,57 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Incera</title>
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="Incera_logo-03.png">
+
+  <!-- Favicon (bruker logoikonet ditt) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="Incera_logo-03.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="Incera_logo-03.png">
+  <link rel="apple-touch-icon" href="Incera_logo-03.png">
+
   <style>
     body {
       margin: 0;
-      padding: 0;
-      background-color: #000;
-      color: #fff;
-      font-family: Arial, sans-serif;
+      height: 100vh;
       display: flex;
       flex-direction: column;
-      align-items: center;
       justify-content: center;
-      min-height: 100vh;
+      align-items: center;
+      background-color: #000;
+      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
       text-align: center;
     }
-    img {
-      max-width: 250px;
-      margin-bottom: 7vh;
+
+    .logo {
+      max-width: 220px;
+      margin-bottom: 80px; /* større avstand til teksten */
     }
-    .description {
-      font-size: 1.2rem;
+
+    .coming-soon {
+      font-size: 1.4rem;
+      margin-bottom: 120px;
     }
+
     .contact {
-      position: absolute;
-      bottom: 30px;
-      font-size: 1rem;
-      color: #aaa;
-      line-height: 1.6;
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+
+    .contact a {
+      color: #fff;
+      text-decoration: none;
     }
   </style>
 </head>
 <body>
-  <img src="Incera_logo-02.png" alt="Incera logo">
-  <div class="description">
+  <img src="Incera_logo-02.png" alt="Incera logo" class="logo">
+
+  <div class="coming-soon">
     Nettside kommer snart
   </div>
+
   <div class="contact">
-    kontakt:<br>
-    <a href="mailto:kontakt@incera.no" style="color:#fff;">kontakt@incera.no</a>
+    Kontakt:<br>
+    <a href="mailto:kontakt@incera.no">kontakt@incera.no</a>
   </div>
 </body>
 </html>
