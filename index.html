@@ -1,108 +1,29 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="no">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Incera</title>
-<style>
-  html,body{height:100%;margin:0;overflow-x:hidden;background:#060b15}
-  #scene{position:fixed; inset:0; display:block}
-  .overlay{position:relative; z-index:2; height:100vh; display:grid; place-items:center; pointer-events:none}
-  .overlay img{width:min(520px,72vw); height:auto; filter:drop-shadow(0 6px 24px rgba(0,0,0,.35))}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Incera</title>
+  <meta name="color-scheme" content="dark">
+  <link rel="preload" as="image" href="Incera_logo-02.png">
+  <style>
+    :root { color-scheme: dark; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      background: #000;                 /* helt sort bakgrunn */
+      min-height: 100svh;               /* full høyde, mobil-trygt */
+      display: grid;
+      place-items: center;              /* sentrer innholdet */
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Inter, sans-serif;
+    }
+    img.logo {
+      width: min(64vw, 520px);          /* skalerer pent på mobil/desktop */
+      height: auto;
+      display: block;
+    }
+  </style>
 </head>
 <body>
-  <canvas id="scene"></canvas>
-  <div class="overlay">
-    <img src="Incera_logo-02.png" alt="Incera">
-  </div>
-
-  <!-- Non-module build of Three.js (global THREE) -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.min.js"></script>
-  <script>
-    const canvas = document.getElementById('scene');
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:false });
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.0;
-
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0a1020);
-    scene.fog = new THREE.Fog(0x0a1020, 12, 28);
-
-    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-    camera.position.set(0, 2.2, 14);
-
-    // Paneler
-    const group = new THREE.Group(); scene.add(group);
-    const baseMat = new THREE.MeshPhysicalMaterial({
-      color: new THREE.Color("#0f213a"),
-      metalness: 0.1,
-      roughness: 0.08,
-      clearcoat: 1.0,
-      clearcoatRoughness: 0.04
-    });
-    const W=50,H=4,D=0.4, geo = new THREE.BoxGeometry(W,H,D);
-    [-14,-6,2,10,18].forEach((x,i)=>{
-      const m = baseMat.clone();
-      m.color.multiplyScalar(1 - (i%2?0.06:0));
-      const mesh = new THREE.Mesh(geo, m);
-      mesh.rotation.z = THREE.MathUtils.degToRad(-22);
-      mesh.position.set(x, -1.0 + (i%2?0.25:-0.25), -i*1.4);
-      mesh.scale.z = 1.02;
-      group.add(mesh);
-    });
-
-    // Gulv
-    const floor = new THREE.Mesh(
-      new THREE.PlaneGeometry(120,120),
-      new THREE.MeshPhysicalMaterial({ color:"#0a1326", metalness:0, roughness:0.9, clearcoat:0.2, clearcoatRoughness:0.2 })
-    );
-    floor.rotation.x = -Math.PI/2; floor.position.y = -6; scene.add(floor);
-
-    // Lys
-    const key = new THREE.SpotLight(0xffffff, 4.0, 80, THREE.MathUtils.degToRad(18), 0.35, 1.2);
-    key.position.set(12,8,10);
-    key.target.position.set(-6,-1,-8);
-    scene.add(key, key.target);
-
-    const rim = new THREE.DirectionalLight(0x8ecaff, 0.8);
-    rim.position.set(-8,6,-6); scene.add(rim);
-
-    scene.add(new THREE.AmbientLight(0x1c2a44, 0.35));
-
-    function onScroll(){
-      const h = document.body.scrollHeight - innerHeight;
-      const p = h>0 ? scrollY/h : 0;
-      key.position.x = THREE.MathUtils.lerp(14, -6, p);
-      key.position.y = THREE.MathUtils.lerp(9, 5, p);
-      key.position.z = THREE.MathUtils.lerp(12, -2, p);
-      key.target.position.x = THREE.MathUtils.lerp(-4, 6, p);
-      key.target.position.y = THREE.MathUtils.lerp(-1.2, -0.6, p);
-      key.target.position.z = THREE.MathUtils.lerp(-8, -4, p);
-      key.target.updateMatrixWorld();
-      camera.position.z = THREE.MathUtils.lerp(14, 11.5, p);
-      camera.position.y = THREE.MathUtils.lerp(2.2, 1.8, p);
-    }
-    function onPointer(e){
-      const x = (e.clientX ?? e.touches?.[0]?.clientX ?? innerWidth/2)/innerWidth - 0.5;
-      const y = (e.clientY ?? e.touches?.[0]?.clientY ?? innerHeight/2)/innerHeight - 0.5;
-      group.rotation.z = -0.38 + x * 0.04;
-      group.position.y = -0.6 + y * 0.6;
-    }
-    function resize(){
-      const w = canvas.clientWidth || innerWidth;
-      const h = canvas.clientHeight || innerHeight;
-      renderer.setSize(w, h, false);
-      camera.aspect = w/h; camera.updateProjectionMatrix();
-    }
-    function render(){ requestAnimationFrame(render); renderer.render(scene, camera); }
-
-    addEventListener('resize', resize);
-    addEventListener('scroll', onScroll, {passive:true});
-    addEventListener('mousemove', onPointer, {passive:true});
-    addEventListener('touchmove', onPointer, {passive:true});
-    resize(); onScroll(); onPointer({clientX:innerWidth*.55, clientY:innerHeight*.45}); render();
-  </script>
+  <img class="logo" src="Incera_logo-02.png" alt="Incera">
 </body>
 </html>
