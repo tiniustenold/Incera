@@ -1,60 +1,57 @@
 <!DOCTYPE html>
 <html lang="no">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Incera</title>
 
-  <!-- Favicon (bruker logoikonet ditt) -->
-  <link rel="icon" type="image/png" sizes="32x32" href="Incera_logo-03.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="Incera_logo-03.png">
-  <link rel="apple-touch-icon" href="Incera_logo-03.png">
+  <!-- Favicon: bruk PNG-ikonet ditt -->
+  <link rel="icon" type="image/png" sizes="32x32" href="Incera_logo-03.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="Incera_logo-03.png" />
+  <link rel="apple-touch-icon" href="Incera_logo-03.png" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="color-scheme" content="dark" />
 
   <style>
+    :root { color-scheme: dark; }
+    html, body { height: 100%; margin: 0; }
     body {
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background-color: #000;
+      background: #000;
       color: #fff;
       font-family: Arial, Helvetica, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
       text-align: center;
+      min-height: 100vh;
     }
-
     .logo {
-      max-width: 220px;
-      margin-bottom: 80px; /* større avstand til teksten */
+      margin-top: 80px;           /* logo lenger opp */
+      max-width: 250px;
+      height: auto;
     }
-
     .coming-soon {
-      font-size: 1.4rem;
-      margin-bottom: 120px;
+      margin-top: 60px;           /* større avstand fra logo til tekst */
+      font-size: 1.4em;
     }
-
-    .contact {
-      font-size: 0.9rem;
-      color: #ccc;
+    footer {
+      margin-bottom: 20px;
+      font-size: .9em;
+      color: #aaa;
+      line-height: 1.6;
     }
-
-    .contact a {
-      color: #fff;
-      text-decoration: none;
-    }
+    footer a { color: #fff; text-decoration: none; font-weight: 600; }
   </style>
 </head>
 <body>
-  <img src="Incera_logo-02.png" alt="Incera logo" class="logo">
-
-  <div class="coming-soon">
-    Nettside kommer snart
+  <div>
+    <img src="Incera_logo-02.png" alt="Incera logo" class="logo" />
+    <div class="coming-soon">Nettside kommer snart</div>
   </div>
-
-  <div class="contact">
-    Kontakt:<br>
+  <footer>
+    kontakt:<br />
     <a href="mailto:kontakt@incera.no">kontakt@incera.no</a>
-  </div>
+  </footer>
 </body>
 </html>
